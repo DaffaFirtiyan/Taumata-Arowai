@@ -4,7 +4,7 @@ library("stringr")
 library("ggplot2")
 library("tidyr")
 
-wwtp <- read_excel("2020-2021 Combined WWTP Data.xlsx", sheet=2, skip=2)
+wwtp <- read_excel("2020-2021 Combined WWTP Data.xlsx", sheet=2)
 
 #how many wwtp in each council?
 wwtp.count <- wwtp %>% count(`Managing organisation`)
@@ -60,3 +60,8 @@ ggplot(effluent.count, aes(x = `Effluent consent status`, y = n)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   labs(title = "Effluent Consent Status Across WWTPs", x = "Effluent Consent Status", y = "Count")
 ggsave("effluentbar.jpg", width = 12, height = 8, dpi = 300)
+
+
+#convert csv for map in tableau
+write.table(wwtp[,c("Northing", "Easting")],
+            file="cord.csv", sep=" ", row.names=FALSE)

@@ -56,12 +56,21 @@ wwtp$`Effluent consent status` <- factor(wwtp$`Effluent consent status`,
                                          levels=c("Current", "Lodged", "Complying", "Expired", "Significant Non-Compliance-NFU (RM16-0206-DC.02+)"))
 
 effluent.count <- wwtp %>% count(`Effluent consent status`)
+summary(effluent.count)
 ggplot(effluent.count, aes(x = `Effluent consent status`, y = n)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   labs(title = "Effluent Consent Status Across WWTPs", x = "Effluent Consent Status", y = "Count")
 ggsave("effluentbar.jpg", width = 12, height = 8, dpi = 300)
 
 
-#convert csv for map in tableau
-write.table(wwtp[,c("Northing", "Easting")],
-            file="cord.csv", sep=" ", row.names=FALSE)
+wwtp.subset <- wwtp[, c("Managing organisation", "Effluent consent expiry date", "Effluent consent status")]
+wwtp.subset$`Effluent consent expiry date` <- as.Date(wwtp_subset$`Effluent consent expiry date`, format = "%d/%m/%Y")
+
+summary(wwtp.subset)
+
+ggplot(na.omit(wwtp.subset), aes(x =`Effluent consent expiry date`, y = `Effluent consent status`, color =`Managing organisation`)) + 
+  geom_point(size = 3) + 
+  theme_bw() +
+  scale_x_date(date_labels="%Y",date_breaks  ="2 year") +
+  labs(x = "Effluent consent expiry date", y = "Effluent consent status", color = "Managing organisation")
+ggsave("effluentscatter.jpg", width = 12, height = 8, dpi = 300)
